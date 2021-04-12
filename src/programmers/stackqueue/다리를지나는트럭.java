@@ -1,5 +1,8 @@
 package programmers.stackqueue;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 /**
  * 트럭 여러 대가 강을 가로지르는 일 차선 다리를 정해진 순으로 건너려 합니다. 모든 트럭이 다리를 건너려면 최소 몇 초가 걸리는지 알아내야 합니다. 트럭은 1초에 1만큼 움직이며, 다리 길이는 bridge_length이고 다리는 무게 weight까지 견딥니다.
  * ※ 트럭이 다리에 완전히 오르지 않은 경우, 이 트럭의 무게는 고려하지 않습니다.
@@ -36,11 +39,49 @@ public class 다리를지나는트럭 {
         int weight = 100;
         int[] truck_weights = {10,10,10,10,10,10,10,10,10,10};
 
+        int[] truck_time = new int[truck_weights.length];
+        for(int i = 0 ; i < truck_weights.length ; i++) {
+            truck_time[i] = 0;
+        }
         int tmpWeight = 0;
         int i = 0;
+        int pointer = 0;
+        Queue<Integer> queue = new LinkedList<>();
+        Queue<Integer> ingList = new LinkedList<>();
+        for(int truck : truck_weights) {
+            queue.add(truck);
+        }
         while (true) {
+            for(int time : truck_time) {
+                if(time == bridge_length)
+                    ingList.poll();
+            }
+
+            if(queue.isEmpty() && ingList.isEmpty())
+                break;
+
+            i++;
+            for(int j = 0 ; j < pointer ; j++) {
+                if(truck_time[j] <= bridge_length)
+                    truck_time[j]++;
+            }
+
+            tmpWeight = 0;
+            for(int kg : ingList) {
+                tmpWeight += kg;
+            }
+
+            if(!queue.isEmpty()) {
+                int next = queue.peek();
+                if (tmpWeight + next <= weight) {
+                    ingList.add(next);
+                    queue.poll();
+                    pointer++;
+                }
+            }
 
         }
+        System.out.println(i);
 
     }
 }
