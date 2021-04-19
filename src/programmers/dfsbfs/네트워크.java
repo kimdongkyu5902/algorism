@@ -24,13 +24,33 @@ package programmers.dfsbfs;
  */
 public class 네트워크 {
     public static void main(String[] args) {
-        int[][] computers = {{1, 1, 0},{1, 1, 0},{0, 0, 1}};
-        int[] networks = new int[computers.length];
+        System.out.println(solution(3, new int[][]{{1, 1, 0},{1, 1, 0},{0, 0, 1}}));
+        System.out.println(solution(3, new int[][]{{1, 1, 0}, {1, 1, 1}, {0, 1, 1}}));
+    }
 
+    private static int solution(int n, int[][] computers) {
+        //방문 체크
+        boolean[] check = new boolean[computers.length];
+        int count = 0;
         for(int i = 0 ; i < computers.length ; i++) {
-            for(int j = i+1 ; j < computers.length ; j++) {
-
+            //방문한 곳이 아닌곳 중 네트워크 전체 스캔
+            if(!check[i]) {
+                dfs(computers, i, check);
+                count++;
             }
         }
+        return count;
     }
+
+    private static void dfs(int[][] computers, int i, boolean[] check) {
+        //방문표시
+        check[i] = true;
+
+        // 다른 곳에서 체크하지 않앗다면 그곳에서 다시 전체 스캔
+        for (int j = 0 ; j < computers.length ; j++) {
+            if( i != j && computers[i][j] == 1 && check[j] == false)
+                dfs(computers, j, check);
+        }
+    }
+
 }
