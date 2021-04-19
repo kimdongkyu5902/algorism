@@ -35,53 +35,51 @@ import java.util.Queue;
  */
 public class 다리를지나는트럭 {
     public static void main(String[] args) {
-        int bridge_length = 100;
-        int weight = 100;
-        int[] truck_weights = {10,10,10,10,10,10,10,10,10,10};
+        System.out.println(solution(2, 10, new int[]{7, 4, 5, 6}));
+        System.out.println(solution(100, 100, new int[]{10}));
+        System.out.println(solution(100, 100, new int[]{10,10,10,10,10,10,10,10,10,10}));
 
-        int[] truck_time = new int[truck_weights.length];
-        for(int i = 0 ; i < truck_weights.length ; i++) {
-            truck_time[i] = 0;
+    }
+
+    private static int solution(int bridge_length, int weight, int[] truck_weights) {
+        Queue<Truck> queue = new LinkedList<>();
+        Queue<Truck> ingQueue = new LinkedList<>();
+        for(int truck_weight : truck_weights) {
+            queue.add(new Truck(truck_weight, 0));
         }
-        int tmpWeight = 0;
-        int i = 0;
-        int pointer = 0;
-        Queue<Integer> queue = new LinkedList<>();
-        Queue<Integer> ingList = new LinkedList<>();
-        for(int truck : truck_weights) {
-            queue.add(truck);
-        }
-        while (true) {
-            for(int time : truck_time) {
-                if(time == bridge_length)
-                    ingList.poll();
+
+        // 두 큐가 전부 빌떄까지 시간측정
+        // 매번 큐안에서 움직이며,
+        // 큐에서 빠지고 들어갈때 무게가변화한다.
+        int time = 0;
+        while (!queue.isEmpty() || !ingQueue.isEmpty()) {
+            if(!ingQueue.isEmpty() && ingQueue.peek().ingLength == bridge_length) {
+                Truck truck = ingQueue.poll();
+                weight += truck.weight;
             }
 
-            if(queue.isEmpty() && ingList.isEmpty())
-                break;
-
-            i++;
-            for(int j = 0 ; j < pointer ; j++) {
-                if(truck_time[j] <= bridge_length)
-                    truck_time[j]++;
+            time++;
+            if(!queue.isEmpty() && queue.peek().weight <= weight) {
+                Truck truck = queue.poll();
+                weight -= truck.weight;
+                ingQueue.add(truck);
             }
 
-            tmpWeight = 0;
-            for(int kg : ingList) {
-                tmpWeight += kg;
-            }
-
-            if(!queue.isEmpty()) {
-                int next = queue.peek();
-                if (tmpWeight + next <= weight) {
-                    ingList.add(next);
-                    queue.poll();
-                    pointer++;
-                }
+            for (Truck truck : ingQueue) {
+                truck.ingLength += 1;
             }
 
         }
-        System.out.println(i);
+        return time;
+    }
 
+    static class Truck{
+        public int weight;
+        public int ingLength;
+
+        public Truck(int weight, int ingLength) {
+            this.weight = weight;
+            this.ingLength = ingLength;
+        }
     }
 }
