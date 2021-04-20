@@ -1,5 +1,8 @@
 package programmers.dfsbfs;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
 /**
  * 주어진 항공권을 모두 이용하여 여행경로를 짜려고 합니다. 항상 "ICN" 공항에서 출발합니다.
  *
@@ -28,12 +31,41 @@ package programmers.dfsbfs;
  * ["ICN", "SFO", "ATL", "ICN", "ATL", "SFO"] 순으로 방문할 수도 있지만 ["ICN", "ATL", "ICN", "SFO", "ATL", "SFO"] 가 알파벳 순으로 앞섭니다.
  */
 public class 여행경로 {
-    public void main(String[] args) {
+    public static void main(String[] args) {
         System.out.println(solution(new String[][]{{"ICN", "JFK"},{"HND", "IAD"},{"JFK", "HND"}}));
         System.out.println(solution(new String[][]{{"ICN", "SFO"},{"ICN", "ATL"},{"SFO", "ATL"},{"ATL", "ICN"},{"ATL","SFO"}}));
     }
 
-    private int solution(String[][] strings) {
+    private static String[] solution(String[][] tickets) {
+        List<String[]> ticketList = Arrays.stream(tickets).collect(Collectors.toList());
 
+        Queue<String> queue = new LinkedList<>();
+        List<Queue<String>> resultList = new ArrayList<>();
+        find(resultList, ticketList, queue, "ICN");
+
+        for (Queue<String> stringQueue : resultList) {
+            for (String s : stringQueue) {
+                System.out.println(s);
+            }
+
+        }
+
+        return new String[]{"test"};
+    }
+
+    private static void find(List<Queue<String>> resultList, List<String[]> ticketList, Queue<String> queue, String start) {
+        int i = 0;
+        for(i = 0 ; i < ticketList.size() ; i++) {
+            if(ticketList.get(i)[0].equals(start)) {
+                String[] strings = ticketList.get(i);
+                queue.add(strings[0]);
+                ticketList.remove(i);
+                if(ticketList.size() == 0) {
+                    queue.add(strings[1]);
+                    resultList.add(queue);
+                }
+                find(resultList, ticketList, queue, strings[1]);
+            }
+        }
     }
 }
