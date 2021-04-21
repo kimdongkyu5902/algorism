@@ -37,35 +37,31 @@ public class 여행경로 {
     }
 
     private static String[] solution(String[][] tickets) {
-        List<String[]> ticketList = Arrays.stream(tickets).collect(Collectors.toList());
-
-        Queue<String> queue = new LinkedList<>();
-        List<Queue<String>> resultList = new ArrayList<>();
-        find(resultList, ticketList, queue, "ICN");
-
-        for (Queue<String> stringQueue : resultList) {
-            for (String s : stringQueue) {
-                System.out.println(s);
-            }
-
-        }
-
-        return new String[]{"test"};
+        String result = ""; // 1가지 결과를 sort하기 쉽게 문자열로 받기
+        List<String> resultList = new ArrayList<>();
+        boolean[] visited = new boolean[tickets.length];  // 방문 유무 검사
+        int count = 0;
+        find(count, tickets, result, visited, "ICN", resultList);
+        return resultList.stream().sorted().collect(Collectors.toList()).get(0).split(",");
     }
 
-    private static void find(List<Queue<String>> resultList, List<String[]> ticketList, Queue<String> queue, String start) {
-        int i = 0;
-        for(i = 0 ; i < ticketList.size() ; i++) {
-            if(ticketList.get(i)[0].equals(start)) {
-                String[] strings = ticketList.get(i);
-                queue.add(strings[0]);
-                ticketList.remove(i);
-                if(ticketList.size() == 0) {
-                    queue.add(strings[1]);
-                    resultList.add(queue);
+    private static void find(int count, String[][] tickets, String result, boolean[] visited, String start, List<String> resultList) {
+        for (int i = 0 ; i < tickets.length ; i++) {
+            if(!visited[i] && tickets[i][0].equals(start)) {
+                visited[i] = true;
+                String tmpResult = result;
+                result += tickets[i][0] + ",";
+                if(count == tickets.length - 1) {
+                    result += tickets[i][1]; // 마지막 자리 추가
+                    resultList.add(result); // 1가지 결과 저장
+                    visited[i] = false; // 끝난 뒤 재사용위해 비우기
+                    return;
                 }
-                find(resultList, ticketList, queue, strings[1]);
+                find(count + 1, tickets, result, visited, tickets[i][1], resultList);
+                visited[i] = false; // 다음 방문시 재사용위해 비우기
+                result = tmpResult; // 다음 방문에서 이전 결과로 회귀
             }
         }
+        return;
     }
 }
