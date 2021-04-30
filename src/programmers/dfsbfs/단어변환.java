@@ -1,5 +1,9 @@
 package programmers.dfsbfs;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.PriorityQueue;
+
 /**
  * 두 개의 단어 begin, target과 단어의 집합 words가 있습니다. 아래와 같은 규칙을 이용하여 begin에서 target으로 변환하는 가장 짧은 변환 과정을 찾으려고 합니다.
  *
@@ -26,13 +30,68 @@ package programmers.dfsbfs;
  * 문제에 나온 예와 같습니다.
  *
  * 예제 #2
- * target인 "cog"는 words 안에 없기 때문에 변환할 수 없습니다.
+ * target인 "cog"는 words 안에 없기 때문에 변환할 수 없습니다.L
  */
 public class 단어변환 {
     public static void main(String[] args) {
         System.out.println(solution("hit", "cog", new String[]{"hot", "dot", "dog", "lot", "log", "cog"}));
         System.out.println(solution("hit", "cog", new String[]{"hot", "dot", "dog", "lot", "log"}));
     }
-    private static int solution(String hit, String cog, String[] strings) {
+    private static int solution(String begin, String target, String[] words) {
+        List<String> wordList = new ArrayList<>();
+        for (String word : words) {
+            wordList.add(word);
+        }
+
+        //원하는 단어 없으면 탈출
+        if(!wordList.contains(target))
+            return 0;
+
+        //dfs핵심
+        boolean[] visited = new boolean[words.length];
+
+        int result = 0;
+        PriorityQueue<Integer> queue = new PriorityQueue<>();
+        dfs(begin, target, wordList, visited, result, queue);
+
+        //결과가 없다면 0
+        if(queue.isEmpty())
+            return 0;
+        else
+            return queue.peek();
+    }
+
+    private static void dfs(String begin, String target, List<String> wordList, boolean[] visited, int result, PriorityQueue<Integer> queue) {
+        //변환된경우 탈출
+        if(begin.equals(target)) {
+            queue.offer(result);
+            return;
+        }
+
+        //이미 더 짧은 경로가 있다면 탈출
+        if(!queue.isEmpty() && queue.peek() < result)
+            return;
+
+        for(int i = 0 ; i < wordList.size() ; i++){
+            //방문하지 않고, 변환가능한 경우에만 변환처리
+            if(!visited[i] && changable(begin, wordList.get(i))) {
+                visited[i] = true;
+                dfs(wordList.get(i), target, wordList, visited, ++result, queue);
+                visited[i] = false;
+                result--;
+            }
+        }
+    }
+
+    private static boolean changable(String begin, String word) {
+        int diff = 0;
+        for(int i = 0 ; i < begin.length() ; i++){
+            if(begin.charAt(i) != word.charAt(i))
+                diff++;
+        }
+        if(diff == 1)
+            return true;
+        else
+            return false;
     }
 }
