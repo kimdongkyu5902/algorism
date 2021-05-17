@@ -31,7 +31,7 @@ package monthcodetest2;
  * 27	1, 3, 9, 27	4
  * 따라서, 24 - 25 + 26 + 27 = 52를 return 해야 합니다.
  */
-public class sol1 {
+public class 약수의개수와덧셈 {
     public static void main(String[] args) {
         System.out.println(solution(13, 17));
         System.out.println(solution(24, 27));
