@@ -1,6 +1,9 @@
 package monthcodetest2;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 각 점에 가중치가 부여된 트리가 주어집니다. 당신은 다음 연산을 통하여, 이 트리의 모든 점들의 가중치를 0으로 만들고자 합니다.
@@ -33,17 +36,72 @@ import java.util.*;
  * 주어진 트리는 모든 정점의 가중치를 0으로 만드는 것이 불가능하므로, -1을 return 해야 합니다.
  */
 public class 모두0으로만들기 {
+    private static Long result = 0L;
+    public static void main(String[] args) {
+        System.out.println(solution(new int[]{-5,0,2,1,2}, new int[][]{{0,1},{3,4},{2,3},{0,3}}));
+    }
 
-    /**
-     * 해설
-     *
-     * 노드부터 그리디로 설계
-     *
-     * 가중치 합이 0이어야 정답가능
-     *
-     * 리프노드부터 0만들며 노드에서 제거하다보면 정답에 도달
-     *
-     * 복잡도 n
-     *
-     */
+    public static long solution(int[] a, int[][] edges) {
+        int sum = 0;
+        Map<Integer, Node> tree = new HashMap<>();
+        // 트리 생성, 가중치 초기화
+        for (int i = 0 ; i < a.length ; i++) {
+            sum += a[i];
+            tree.put(i, new Node(a[i]));
+        }
+        if (sum != 0)
+            return -1;
+
+        // 이웃하는 노드들 정보 추가
+        for (int[] edge : edges) {
+            tree.get(edge[0]).naver.add(edge[1]);
+            tree.get(edge[1]).naver.add(edge[0]);
+        }
+        boolean[] visited = new boolean[a.length];
+
+        dfs(tree, visited);
+        return result;
+    }
+
+    private static void dfs(Map<Integer, Node> tree, boolean[] visited) {
+        boolean isChange = true;
+        for (boolean b : visited) {
+            if (b==false) {
+                isChange = false;
+                break;
+            }
+        }
+        if (isChange)
+            return;
+
+        for (int i = 0 ; i < visited.length ; i++) {
+            if (visited[i] == false) {
+                Node node = tree.get(i);
+                if (node.naver.size() == 1) {
+                    int naver = node.naver.get(0);
+                    int weight = node.weight;
+                    Node naverNode = tree.get(naver);
+                    naverNode.weight += weight;
+                    naverNode.naver.remove((Integer)i);
+                    node.naver.remove(0);
+                    result += Math.abs(weight);
+                    visited[i] = true;
+                    dfs(tree, visited);
+                }
+            }
+        }
+
+
+    }
+
+    public static class Node {
+        public int weight;
+        public List<Integer> naver;
+
+        public Node(int weight) {
+            this.weight = weight;
+            this.naver = new ArrayList<>();
+        }
+    }
+
 }
