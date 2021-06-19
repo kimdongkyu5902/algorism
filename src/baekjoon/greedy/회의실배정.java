@@ -22,16 +22,16 @@ public class 회의실배정 {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int N = Integer.parseInt(br.readLine());
 
-        int[][] time = new int[N][2];
+        int[][] meetings = new int[N][2];
         StringTokenizer st;
         for (int i = 0; i < N; i++) {
             st = new StringTokenizer(br.readLine(), " ");
-            time[i][0] = Integer.parseInt(st.nextToken());
-            time[i][1] = Integer.parseInt(st.nextToken());
+            meetings[i][0] = Integer.parseInt(st.nextToken());
+            meetings[i][1] = Integer.parseInt(st.nextToken());
         }
 
         // 종료가 빠른 순으로 정렬
-        Arrays.sort(time, new Comparator<int[]>() {
+        Arrays.sort(meetings, new Comparator<int[]>() {
             @Override
             public int compare(int[] o1, int[] o2) {
                 // 종료시간이 같을 경우 시작시간이 빠른순으로 정렬해야한다.
@@ -45,8 +45,8 @@ public class 회의실배정 {
         int prev_end_time = 0;
         for (int i = 0; i < N; i++) {
             // 직전 종료시간이 다음 회의 시작 시간보다 작거나 같다면 갱신
-            if (prev_end_time <= time[i][0]) {
-                prev_end_time = time[i][1];
+            if (prev_end_time <= meetings[i][0]) {
+                prev_end_time = meetings[i][1];
                 count++;
             }
         }
